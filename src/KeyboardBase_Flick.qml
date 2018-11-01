@@ -238,11 +238,19 @@ SwipeGestureArea {
             point.x = incomingPoint.x
             point.y = incomingPoint.y
 
+<<<<<<< 708731a7ae0a46c26009a3d8bc5a737ee47ee2bb
             if (ActivePoints.array.length === 1 && closeSwipeActive && pressTimer.running && !flicker.enabled) {
                 var yDiff = point.y - point.startY
                 silenceFeedback = (yDiff > Math.abs(point.x - point.startX))
 
                 if (yDiff > closeSwipeThreshold) {
+=======
+            if (ActivePoints.array.length === 1 && closeSwipeActive && pressTimer.running) {
+                var yDiff = point.y - point.startY
+                silenceFeedback = (yDiff > Math.abs(point.x - point.startX))
+
+                if (yDiff > closeSwipeThreshold && !flicker.enabled) {
+>>>>>>> Add assist labels and fix for 2.1.4 patch
                     // swiped down to close keyboard
                     MInputMethodQuick.userHide()
                     if (point.pressedKey) {

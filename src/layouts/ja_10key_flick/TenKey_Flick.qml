@@ -49,7 +49,6 @@ KeyBase {
     property string symView2
     property int separator: SeparatorState.AutomaticSeparator
     property bool implicitSeparator: true // set by layouting
-//    property bool separator: true
     property bool showHighlight: true
     property string accents
     property string accentsShifted
@@ -61,13 +60,12 @@ KeyBase {
     property bool enableFlicker: true
     property bool symbolOnly: false
 
-//    showPopper: false
-
     keyType: KeyType.CharacterKey
-    text: keyText.text.length === 1 ? keyText.text : (keyText.text.charAt(flickerIndex) ? keyText.text.charAt(flickerIndex) : keyText.text.chaAt(0))
+    text: keyText.text
     caption: text
 
     Column {
+        id: mainLabel
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         Text {
@@ -76,11 +74,40 @@ KeyBase {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.family: Theme.fontFamily
-//            font.pixelSize: !pressed && symbolOnly ? Theme.fontSizeExtraSmall : Theme.fontSizeMedium
-            font.pixelSize: !pressed && symbolOnly ? Theme.fontSizeExtraSmall : (portraitMode === false || attributes.isShifted || attributes.inSymView) ? Theme.fontSizeMedium : Theme.fontSizeLarge
+            font.pixelSize: !pressed && symbolOnly
+                ? Theme.fontSizeExtraSmall
+                : (portraitMode === false || attributes.isShifted || attributes.inSymView)
+                    ? Theme.fontSizeMedium
+                    : Theme.fontSizeSmall
             font.letterSpacing: (portraitMode === true && !attributes.isShifted && !attributes.inSymView && symbolOnly && flickerText.length > 3) ? -10 : 0
             color: pressed ? Theme.highlightColor : Theme.primaryColor
-            text: attributes.inSymView && symView.length > 0 ? (!pressed ? (symbolOnly ? symView : symView.charAt(0)) : (symView.charAt(flickerIndex) !== "" ? symView.charAt(flickerIndex) : symView.charAt(0))) : (attributes.isShifted ? (!pressed ? (captionShifted === " " ? "" : (textCaptState && captionShifted2 !== "" ? captionShifted2 : captionShifted)) : (textCaptState && captionShifted2 !== "" ? (captionShifted2.charAt(flickerIndex) !== "" ? captionShifted2.charAt(flickerIndex) : captionShifted2.charAt(0)) : (captionShifted.charAt(flickerIndex) !== "" ? captionShifted.charAt(flickerIndex) : captionShifted.charAt(0)))) : !pressed && symbolOnly ? flickerText : (flickerText.charAt(flickerIndex) !== "" ? flickerText.charAt(flickerIndex) : flickerText.charAt(0)))
+            text: attributes.inSymView && symView.length > 0
+                ? (!pressed
+                    ? (symbolOnly
+                        ? symView
+                        : symView.charAt(0))
+                    : (symView.charAt(flickerIndex) !== ""
+                        ? symView.charAt(flickerIndex)
+                        : symView.charAt(0)))
+                : (attributes.isShifted
+                    ? (!pressed
+                        ? (captionShifted === " "
+                            ? ""
+                            : (textCaptState && captionShifted2 !== ""
+                                ? captionShifted2
+                                : captionShifted))
+                        : (textCaptState && captionShifted2 !== ""
+                            ? (captionShifted2.charAt(flickerIndex) !== ""
+                                ? captionShifted2.charAt(flickerIndex)
+                                : captionShifted2.charAt(0))
+                            : (captionShifted.charAt(flickerIndex) !== ""
+                                ? captionShifted.charAt(flickerIndex)
+                                : captionShifted.charAt(0))))
+                    : !pressed && symbolOnly
+                        ? flickerText
+                        : (flickerText.charAt(flickerIndex) !== ""
+                            ? flickerText.charAt(flickerIndex)
+                            : flickerText.charAt(0)))
         }
         Text {
             id: secondaryLabel
@@ -92,9 +119,85 @@ KeyBase {
             font.pixelSize: !symbolOnly ? Theme.fontSizeExtraSmall : Theme.fontSizeSmall
             color: pressed ? Theme.highlightColor : Theme.primaryColor
             opacity: (!pressed && attributes.isShifted && captionShifted === " ") ? .8 : .6
-            text: !pressed && attributes.inSymView && symView.length > 0 ? (symbolOnly ? "" : symView.slice(1)) : (!pressed && attributes.isShifted && captionShifted === " " ? "Space" : "")
+            text: !pressed && attributes.inSymView && symView.length > 0
+                ? (symbolOnly
+                    ? ""
+                    : symView.slice(1))
+                : (!pressed && attributes.isShifted && captionShifted === " "
+                    ? "Space"
+                    : "")
         }
     }
+
+  Text {
+      id: keyTextI
+      visible: portraitMode
+      anchors {
+          verticalCenter: parent.verticalCenter
+          right: mainLabel.left
+          rightMargin: Theme.paddingSmall
+
+      }
+      horizontalAlignment: Text.AlignHCenter
+      verticalAlignment: Text.AlignVCenter
+      font.family: Theme.fontFamily
+      font.pixelSize: Theme.fontSizeExtraSmall
+      color: pressed ? Theme.highlightColor : Theme.secondaryColor
+      text: !attributes.inSymView && !attributes.isShifted && flickerIndex == 0
+      ? flickerText.charAt(1)
+      : ""
+  }
+  Text {
+      id: keyTextU
+      visible: portraitMode
+      anchors {
+          horizontalCenter: parent.horizontalCenter
+          bottom: mainLabel.top
+
+      }
+      horizontalAlignment: Text.AlignHCenter
+      verticalAlignment: Text.AlignVCenter
+      font.family: Theme.fontFamily
+      font.pixelSize: Theme.fontSizeExtraSmall
+      color: pressed ? Theme.highlightColor : Theme.secondaryColor
+      text: !attributes.inSymView && !attributes.isShifted && flickerIndex == 0
+          ? flickerText.charAt(2)
+          : ""
+  }
+  Text {
+      id: keyTextE
+      visible: portraitMode
+      anchors {
+          verticalCenter: parent.verticalCenter
+          left: mainLabel.right
+          leftMargin: Theme.paddingSmall
+      }
+      horizontalAlignment: Text.AlignHCenter
+      verticalAlignment: Text.AlignVCenter
+      font.family: Theme.fontFamily
+      font.pixelSize: Theme.fontSizeExtraSmall
+      color: pressed ? Theme.highlightColor : Theme.secondaryColor
+      text: !attributes.inSymView && !attributes.isShifted && flickerIndex == 0
+          ? flickerText.charAt(3)
+          : ""
+  }
+  Text {
+      id: keyTextO
+      visible: portraitMode
+      anchors {
+          horizontalCenter: parent.horizontalCenter
+          top: mainLabel.bottom
+
+      }
+      horizontalAlignment: Text.AlignHCenter
+      verticalAlignment: Text.AlignVCenter
+      font.family: Theme.fontFamily
+      font.pixelSize: Theme.fontSizeExtraSmall
+      color: pressed ? Theme.highlightColor : Theme.secondaryColor
+      text: !attributes.inSymView && !attributes.isShifted && flickerIndex == 0
+          ? flickerText.charAt(4)
+          : ""
+  }
 
     Image {
         source: "../../graphic-keyboard-highlight-top.png"
