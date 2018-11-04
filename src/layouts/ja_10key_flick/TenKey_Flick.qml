@@ -129,82 +129,49 @@ KeyBase {
         }
     }
 
-  Text {
-      id: keyTextI
-      visible: portraitMode
-      anchors {
-          verticalCenter: parent.verticalCenter
-          right: mainLabel.left
-          rightMargin: Theme.paddingSmall
+    AssistLabel {
+        id: keyTextI
+        anchors {
+            verticalCenter: parent.verticalCenter
+            right: mainLabel.left
+            rightMargin: Theme.paddingSmall
+        }
+        key: flickerText.charAt(1)
+    }
 
-      }
-      horizontalAlignment: Text.AlignHCenter
-      verticalAlignment: Text.AlignVCenter
-      font.family: Theme.fontFamily
-      font.pixelSize: Theme.fontSizeExtraSmall
-      color: pressed ? Theme.highlightColor : Theme.secondaryColor
-      text: !attributes.inSymView && !attributes.isShifted && flickerIndex == 0
-      ? flickerText.charAt(1)
-      : ""
-  }
-  Text {
-      id: keyTextU
-      visible: portraitMode
-      anchors {
-          horizontalCenter: parent.horizontalCenter
-          bottom: mainLabel.top
+    AssistLabel {
+        id: keyTextU
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            bottom: mainLabel.top
+        }
+        key: flickerText.charAt(2)
+    }
 
-      }
-      horizontalAlignment: Text.AlignHCenter
-      verticalAlignment: Text.AlignVCenter
-      font.family: Theme.fontFamily
-      font.pixelSize: Theme.fontSizeExtraSmall
-      color: pressed ? Theme.highlightColor : Theme.secondaryColor
-      text: !attributes.inSymView && !attributes.isShifted && flickerIndex == 0
-          ? flickerText.charAt(2)
-          : ""
-  }
-  Text {
-      id: keyTextE
-      visible: portraitMode
-      anchors {
-          verticalCenter: parent.verticalCenter
-          left: mainLabel.right
-          leftMargin: Theme.paddingSmall
-      }
-      horizontalAlignment: Text.AlignHCenter
-      verticalAlignment: Text.AlignVCenter
-      font.family: Theme.fontFamily
-      font.pixelSize: Theme.fontSizeExtraSmall
-      color: pressed ? Theme.highlightColor : Theme.secondaryColor
-      text: !attributes.inSymView && !attributes.isShifted && flickerIndex == 0
-          ? flickerText.charAt(3)
-          : ""
-  }
-  Text {
-      id: keyTextO
-      visible: portraitMode
-      anchors {
-          horizontalCenter: parent.horizontalCenter
-          top: mainLabel.bottom
+    AssistLabel {
+        id: keyTextE
+        anchors {
+            verticalCenter: parent.verticalCenter
+            left: mainLabel.right
+            leftMargin: Theme.paddingSmall
+        }
+        key: flickerText.charAt(3)
+    }
 
-      }
-      horizontalAlignment: Text.AlignHCenter
-      verticalAlignment: Text.AlignVCenter
-      font.family: Theme.fontFamily
-      font.pixelSize: Theme.fontSizeExtraSmall
-      color: pressed ? Theme.highlightColor : Theme.secondaryColor
-      text: !attributes.inSymView && !attributes.isShifted && flickerIndex == 0
-          ? flickerText.charAt(4)
-          : ""
-  }
+    AssistLabel {
+        id: keyTextO
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: mainLabel.bottom
+        }
+        key: flickerText.charAt(4)
+    }
 
     Image {
         source: "../../graphic-keyboard-highlight-top.png"
         anchors.right: parent.right
         visible: (separator === SeparatorState.AutomaticSeparator && implicitSeparator)
                  || separator === SeparatorState.VisibleSeparator
-//        visible: separator
     }
 
     Rectangle {
