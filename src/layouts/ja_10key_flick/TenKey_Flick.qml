@@ -76,8 +76,8 @@ KeyBase {
             font.family: Theme.fontFamily
             font.pixelSize: !pressed && symbolOnly
                 ? Theme.fontSizeExtraSmall
-                : (portraitMode === false || attributes.isShifted || attributes.inSymView)
-                    ? Theme.fontSizeMedium
+                : (!portraitMode || attributes.isShifted || attributes.inSymView)
+                    ? Theme.fontSizeLarge
                     : (flickerIndex > 0
                         ? Theme.fontSizeExtraLarge
                         : Theme.fontSizeSmall)
@@ -96,8 +96,12 @@ KeyBase {
                         ? (captionShifted === " "
                             ? ""
                             : (textCaptState && captionShifted2 !== ""
-                                ? captionShifted2
-                                : captionShifted))
+                                ? !portraitMode
+                                    ? captionShifted2
+                                    : captionShifted2.charAt(0)
+                                : !portraitMode
+                                    ? captionShifted
+                                    : captionShifted.charAt(0)))
                         : (textCaptState && captionShifted2 !== ""
                             ? (captionShifted2.charAt(flickerIndex) !== ""
                                 ? captionShifted2.charAt(flickerIndex)
@@ -136,39 +140,33 @@ KeyBase {
     AssistLabel {
         id: keyTextI
         anchors {
-            verticalCenter: parent.verticalCenter
-            right: mainLabel.left
-            rightMargin: Theme.paddingSmall
+            horizontalCenterOffset: -Theme.paddingMedium * 3
         }
-        key: flickerText.charAt(1)
+        keyIndex: 1
     }
 
     AssistLabel {
         id: keyTextU
         anchors {
-            horizontalCenter: parent.horizontalCenter
-            bottom: mainLabel.top
+            verticalCenterOffset: -Theme.paddingMedium * 3
         }
-        key: flickerText.charAt(2)
+        keyIndex: 2
     }
 
     AssistLabel {
         id: keyTextE
         anchors {
-            verticalCenter: parent.verticalCenter
-            left: mainLabel.right
-            leftMargin: Theme.paddingSmall
+            horizontalCenterOffset: Theme.paddingMedium * 3
         }
-        key: flickerText.charAt(3)
+        keyIndex: 3
     }
 
     AssistLabel {
         id: keyTextO
         anchors {
-            horizontalCenter: parent.horizontalCenter
-            top: mainLabel.bottom
+            verticalCenterOffset: Theme.paddingMedium * 3
         }
-        key: flickerText.charAt(4)
+        keyIndex: 4
     }
 
     Image {
