@@ -78,7 +78,9 @@ KeyBase {
                 ? Theme.fontSizeExtraSmall
                 : (portraitMode === false || attributes.isShifted || attributes.inSymView)
                     ? Theme.fontSizeMedium
-                    : Theme.fontSizeSmall
+                    : (flickerIndex > 0
+                        ? Theme.fontSizeExtraLarge
+                        : Theme.fontSizeSmall)
             font.letterSpacing: (portraitMode === true && !attributes.isShifted && !attributes.inSymView && symbolOnly && flickerText.length > 3) ? -10 : 0
             color: pressed ? Theme.highlightColor : Theme.primaryColor
             text: attributes.inSymView && symView.length > 0
@@ -104,7 +106,9 @@ KeyBase {
                                 ? captionShifted.charAt(flickerIndex)
                                 : captionShifted.charAt(0))))
                     : !pressed && symbolOnly
-                        ? flickerText
+                        ? (!portraitMode
+                            ? flickerText
+                            : flickerText.charAt(0))
                         : (flickerText.charAt(flickerIndex) !== ""
                             ? flickerText.charAt(flickerIndex)
                             : flickerText.charAt(0)))
