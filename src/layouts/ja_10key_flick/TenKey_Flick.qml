@@ -136,37 +136,12 @@ KeyBase {
                     : "")
         }
     }
-
-    AssistLabel {
-        id: keyTextI
-        anchors {
-            horizontalCenterOffset: -Theme.paddingMedium * 3
+    
+    Repeater {
+        model: 4
+        AssistLabel {
+            keyIndex: index + 1
         }
-        keyIndex: 1
-    }
-
-    AssistLabel {
-        id: keyTextU
-        anchors {
-            verticalCenterOffset: -Theme.paddingMedium * 3
-        }
-        keyIndex: 2
-    }
-
-    AssistLabel {
-        id: keyTextE
-        anchors {
-            horizontalCenterOffset: Theme.paddingMedium * 3
-        }
-        keyIndex: 3
-    }
-
-    AssistLabel {
-        id: keyTextO
-        anchors {
-            verticalCenterOffset: Theme.paddingMedium * 3
-        }
-        keyIndex: 4
     }
 
     Image {
