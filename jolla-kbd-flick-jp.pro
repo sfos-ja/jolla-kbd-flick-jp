@@ -7,6 +7,7 @@ OTHER_FILES = \
 
 src.files = \
         src/Flicker.qml \
+        src/FlickPopper.qml \
         src/layouts
 src.path = /usr/share/maliit/plugins/com/jolla
 

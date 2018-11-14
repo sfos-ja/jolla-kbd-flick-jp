@@ -30,6 +30,7 @@ rm -rf %{buildroot}
 
 %files
 /usr/share/maliit/plugins/com/jolla/Flicker.qml
+/usr/share/maliit/plugins/com/jolla/FlickPopper.qml
 /usr/share/maliit/plugins/com/jolla/layouts/ja_10key_flick.qml
 /usr/share/maliit/plugins/com/jolla/layouts/ja_10key_flick.conf
 /usr/share/maliit/plugins/com/jolla/layouts/ja_10key_flick/
@@ -47,7 +48,3 @@ fi
 
 * Thu Nov 1 2018 Topias Vainio <toxip@disroot.org> 0.07-1
 - Fixed patch for Lemmenjoki 3.0.0 update
-
-* Wed Mar 2 2017 Topias Vainio <toxip@disroot.org> 0.1-1
-- Added assisting labels for flick keys
-- Fixed patch for Lapuanjoki 2.1.4 update

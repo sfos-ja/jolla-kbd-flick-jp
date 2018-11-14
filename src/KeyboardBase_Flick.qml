@@ -106,6 +106,16 @@ SwipeGestureArea {
         target: lastPressedKey
     }
 
+    Repeater {
+        id: flickerPoppers
+        model: 4
+        FlickPopper {
+            z: 10
+            target: lastPressedKey
+            popperIndex: index + 1
+        }
+    }
+
     Popper {
         id: popper
         z: 10

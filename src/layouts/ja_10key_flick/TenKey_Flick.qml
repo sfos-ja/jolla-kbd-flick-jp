@@ -60,6 +60,7 @@ KeyBase {
     property bool enableFlicker: true
     property bool symbolOnly: false
 
+    showPopper: false
     keyType: KeyType.CharacterKey
     text: keyText.text
     caption: text
@@ -173,4 +174,19 @@ KeyBase {
         }
     }
 
+    function getKeyString() {
+        if (attributes.inSymView) {
+            return symView
+        }
+
+        if (attributes.isShifted) {
+            if (textCaptState) {
+                return captionShifted2
+            } else {
+                return captionShifted
+            }
+        }
+
+        return flickerText
+    }
 }
