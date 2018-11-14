@@ -55,14 +55,23 @@ KeyBase {
     property bool fixedWidth
     property alias useBoldFont: keyText.font.bold
     property alias  _keyText: keyText.text
+    property string currentText: flickerText
 
     property int flickerIndex: 0
     property bool enableFlicker: true
     property bool symbolOnly: false
 
+    Connections {
+        target: attributes
+        onIsShiftedChanged: updateKeyString()
+        onInSymViewChanged: updateKeyString()
+    }
+
     showPopper: false
     keyType: KeyType.CharacterKey
-    text: keyText.text
+    text: currentText.charAt(flickerIndex) === ""
+        ? currentText.charAt(0)
+        : currentText.charAt(flickerIndex)
     caption: text
 
     Column {
@@ -81,42 +90,25 @@ KeyBase {
                     ? Theme.fontSizeLarge
                     : (flickerIndex > 0
                         ? Theme.fontSizeExtraLarge
-                        : Theme.fontSizeSmall)
+                        : (!pressed
+                            ? Theme.fontSizeMedium
+                            : Theme.fontSizeExtraLarge))
             font.letterSpacing: (portraitMode === true && !attributes.isShifted && !attributes.inSymView && symbolOnly && flickerText.length > 3) ? -10 : 0
-            color: pressed ? Theme.highlightColor : Theme.primaryColor
-            text: attributes.inSymView && symView.length > 0
-                ? (!pressed
-                    ? (symbolOnly
+            color: !pressed || (flickerIndex == 0 || currentText.charAt(flickerIndex) == "")
+                ? Theme.primaryColor
+                : Theme.highlightColor
+            text: pressed
+                ? currentText.charAt(0)
+                : (currentText.charAt(0) == " "
+                    ? ""
+                    : (symbolOnly && attributes.inSymView
                         ? symView
-                        : symView.charAt(0))
-                    : (symView.charAt(flickerIndex) !== ""
-                        ? symView.charAt(flickerIndex)
-                        : symView.charAt(0)))
-                : (attributes.isShifted
-                    ? (!pressed
-                        ? (captionShifted === " "
-                            ? ""
-                            : (textCaptState && captionShifted2 !== ""
-                                ? !portraitMode
-                                    ? captionShifted2
-                                    : captionShifted2.charAt(0)
-                                : !portraitMode
-                                    ? captionShifted
-                                    : captionShifted.charAt(0)))
-                        : (textCaptState && captionShifted2 !== ""
-                            ? (captionShifted2.charAt(flickerIndex) !== ""
-                                ? captionShifted2.charAt(flickerIndex)
-                                : captionShifted2.charAt(0))
-                            : (captionShifted.charAt(flickerIndex) !== ""
-                                ? captionShifted.charAt(flickerIndex)
-                                : captionShifted.charAt(0))))
-                    : !pressed && symbolOnly
-                        ? (!portraitMode
-                            ? flickerText
-                            : flickerText.charAt(0))
-                        : (flickerText.charAt(flickerIndex) !== ""
-                            ? flickerText.charAt(flickerIndex)
-                            : flickerText.charAt(0)))
+                        : (!portraitMode
+                            ? ((attributes.isShifted && !attributes.inSymView) || symbolOnly
+                                ? currentText
+                                : currentText.charAt(flickerIndex))                                
+                            : currentText.charAt(0))))
+                            
         }
         Text {
             id: secondaryLabel
@@ -174,19 +166,21 @@ KeyBase {
         }
     }
 
-    function getKeyString() {
+    function updateKeyString() {
         if (attributes.inSymView) {
-            return symView
+            currentText = symView
+            return
         }
 
         if (attributes.isShifted) {
             if (textCaptState) {
-                return captionShifted2
+                currentText = captionShifted2
             } else {
-                return captionShifted
+                currentText = captionShifted
             }
+            return
         }
 
-        return flickerText
+        currentText = flickerText
     }
 }

@@ -44,7 +44,7 @@ Rectangle {
     property int popperIndex
     property string popperText: target !== null
         ? (target.enableFlicker === true
-            ? target.getKeyString().charAt(popperIndex)
+            ? target.currentText.charAt(popperIndex)
             : "")
         : ""
 
@@ -105,5 +105,5 @@ Rectangle {
             : (popperIndex == 1
                 ? -target.width + (target.width - popper.width) + Theme.paddingSmall
                 :  target.width - Theme.paddingSmall))
-    }   
+    }
 }

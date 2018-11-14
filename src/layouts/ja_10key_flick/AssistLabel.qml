@@ -5,7 +5,7 @@ import com.jolla.keyboard 1.0
 Text {
     property int keyIndex
     
-    visible: portraitMode
+    visible: portraitMode && !pressed
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
     anchors {
