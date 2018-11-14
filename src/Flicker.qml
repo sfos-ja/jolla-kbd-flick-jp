@@ -56,6 +56,9 @@ QtObject {
         var flickerKeyDiffY = Math.floor(Math.max(flickerKeySize, target.height) - Math.min(flickerKeySize, target.height)) / 2
 
         var oldIndex = target.flickerIndex
+        var oldChar = target.getKeyString().charAt(target.flickerIndex) === ""
+            ? target.getKeyString().charAt(0)
+            : target.getKeyString().charAt(target.flickerIndex)
         if (flickerMoved.y > 0-flickerKeyDiffY-flickerKeyOuterY && flickerMoved.y < target.height+flickerKeyDiffY+flickerKeyOuterY && flickerMoved.x < flickerStart.x && flickerStart.x - flickerMoved.x > flickerKeySize * 0.4) {
             target.flickerIndex = 1
         } else if (flickerMoved.y > 0-flickerKeyDiffY-flickerKeyOuterY && flickerMoved.y < target.height+flickerKeyDiffY+flickerKeyOuterY && flickerMoved.x > flickerStart.x && flickerMoved.x - flickerStart.x > flickerKeySize * 0.4){
@@ -74,7 +77,9 @@ QtObject {
             }
         }
 
-        if (oldIndex !== target.flickerIndex) {
+        if (oldIndex !== target.flickerIndex
+            && oldChar !== target.getKeyString().charAt(target.flickerIndex)
+            && target.getKeyString().charAt(target.flickerIndex) !== "") {
             SampleCache.play("/usr/share/sounds/jolla-ambient/stereo/keyboard_letter.wav")
             buttonPressEffect.play()
         }
