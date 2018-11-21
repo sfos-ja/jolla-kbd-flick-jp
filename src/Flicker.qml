@@ -83,5 +83,8 @@ QtObject {
             buttonPressEffect.play()
         }
 
+        if (target.showPopper) {
+            popper.setup()
+        }
     }
 }
