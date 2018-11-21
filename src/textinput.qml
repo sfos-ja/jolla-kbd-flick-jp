@@ -336,6 +336,25 @@ Page {
             }
 
             SectionHeader {
+                text: "Flick keyboard"
+            }
+
+            TextSwitch {
+                automaticCheck: false
+                checked: flickAssistConfig.value
+                text: "Assist labels"
+                onClicked: flickAssistConfig.value = !flickAssistConfig.value
+            }
+
+
+            TextSwitch {
+                automaticCheck: false
+                checked: flickPopperConfig.value
+                text: "Flick popper"
+                onClicked: flickPopperConfig.value = !flickPopperConfig.value
+            }
+
+            SectionHeader {
                 //% "Hardware keyboards"
                 text: qsTrId("setings_text_input-la-hardware_keyboards_section")
             }
@@ -387,6 +406,20 @@ Page {
         id: mohuConfig
 
         key: "/sailfish/text_input/mohu_enabled"
+        defaultValue: false
+    }
+
+    ConfigurationValue {
+        id: flickAssistConfig
+
+        key: "/sailfish/text_input/flick_assist_label_enabled"
+        defaultValue: false
+    }
+
+    ConfigurationValue {
+        id: flickPopperConfig
+
+        key: "/sailfish/text_input/flick_popper_enabled"
         defaultValue: false
     }
 
