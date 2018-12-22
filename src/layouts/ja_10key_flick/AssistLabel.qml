@@ -14,13 +14,13 @@ Text {
         horizontalCenterOffset: keyIndex == 2 || keyIndex == 4
             ? 0
             : (keyIndex == 1
-                ? -Theme.paddingMedium * 3
-                : Theme.paddingMedium * 3)
+                ? -Theme.fontSizeSmall
+                : Theme.fontSizeSmall)
         verticalCenterOffset: keyIndex == 1 || keyIndex == 3
             ? 0
             : (keyIndex == 2
-                ? -Theme.paddingMedium * 3
-                : Theme.paddingMedium * 3)
+                ? -Theme.fontSizeSmall
+                : Theme.fontSizeSmall)
     }
     font.family: Theme.fontFamily
     font.pixelSize: !portraitMode && attributes.isShifted
