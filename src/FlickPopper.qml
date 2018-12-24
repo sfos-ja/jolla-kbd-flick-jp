@@ -35,8 +35,10 @@ Rectangle {
     
     opacity: 0
     color: Qt.darker(Theme.highlightBackgroundColor, 1.2)
-    height: geometry.popperWidth
-    width: geometry.popperWidth
+    height: portraitMode == false ? geometry.keyHeightLandscape
+        : geometry.keyHeightPortrait
+    width: portraitMode == false ? geometry.keyboardWidthLandscape / 5
+        : geometry.keyboardWidthPortrait / 5
     radius: geometry.popperRadius
     visible: popperText === "" ? false : true
 
@@ -98,12 +100,12 @@ Rectangle {
         y = popper.parent.mapFromItem(target, 0, 0).y + (popperIndex == 1 || popperIndex == 3
             ? 0
             : (popperIndex == 2
-                ? -popper.height + Theme.paddingSmall
-                :  popper.height - Theme.paddingSmall))
+                ? -popper.height
+                :  popper.height))
         x = popper.parent.mapFromItem(target, 0, 0).x + (popperIndex == 2 || popperIndex == 4
             ? (target.width - popper.width) / 2
             : (popperIndex == 1
-                ? -target.width + (target.width - popper.width) + Theme.paddingSmall
-                :  target.width - Theme.paddingSmall))
+                ? -target.width + (target.width - popper.width)
+                :  target.width))
     }
 }
