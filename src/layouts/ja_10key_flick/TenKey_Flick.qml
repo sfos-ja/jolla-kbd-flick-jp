@@ -106,9 +106,9 @@ KeyBase {
                         : (!portraitMode
                             ? ((attributes.isShifted && !attributes.inSymView) || symbolOnly
                                 ? currentText
-                                : currentText.charAt(flickerIndex))                                
+                                : currentText.charAt(flickerIndex))
                             : currentText.charAt(0))))
-                            
+
         }
         Text {
             id: secondaryLabel
@@ -129,7 +129,7 @@ KeyBase {
                     : "")
         }
     }
-    
+
     Repeater {
         model: 4
         AssistLabel {

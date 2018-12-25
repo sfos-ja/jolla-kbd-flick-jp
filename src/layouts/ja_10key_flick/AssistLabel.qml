@@ -4,7 +4,7 @@ import com.jolla.keyboard 1.0
 
 Text {
     property int keyIndex
-    
+    property real offset: (parent.width - Theme.paddingMedium * 1.5) / 3
     visible: portraitMode && !pressed
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
@@ -14,13 +14,13 @@ Text {
         horizontalCenterOffset: keyIndex == 2 || keyIndex == 4
             ? 0
             : (keyIndex == 1
-                ? -Theme.fontSizeSmall
-                : Theme.fontSizeSmall)
+                ? -offset
+                : offset)
         verticalCenterOffset: keyIndex == 1 || keyIndex == 3
             ? 0
             : (keyIndex == 2
-                ? -Theme.fontSizeSmall
-                : Theme.fontSizeSmall)
+                ? -offset
+                : offset)
     }
     font.family: Theme.fontFamily
     font.pixelSize: !portraitMode && attributes.isShifted
