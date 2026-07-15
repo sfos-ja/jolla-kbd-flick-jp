@@ -94,8 +94,7 @@ PagedView {
     }
 
     // Can be changed to PreeditTestHandler to have another mode of input
-    property Item inputHandler: InputHandler {
-    }
+    property Item inputHandler: InputHandler {}
 
     readonly property bool swipeGestureIsSafe: !releaseTimer.running
     readonly property string sourceDirectory: "/usr/share/maliit/plugins/com/jolla/layouts/"
@@ -206,16 +205,19 @@ PagedView {
 
     LanguageSelectionPopup {
         id: languageSelectionPopup
+
         z: 11
     }
 
     Timer {
         id: pressTimer
+
         interval: 500
     }
 
     Timer {
         id: releaseTimer
+
         interval: 300
     }
 
@@ -268,6 +270,7 @@ PagedView {
 
     ConfigurationValue {
         id: useMouseEvents
+
         key: "/sailfish/text_input/use_mouse_events"
         defaultValue: false
     }

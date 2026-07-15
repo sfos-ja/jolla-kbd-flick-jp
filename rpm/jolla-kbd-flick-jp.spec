@@ -1,5 +1,5 @@
 Name:       jolla-kbd-flick-jp
-Version:    1.1.0
+Version:    1.2.0
 Release:    1%{?dist}
 Summary:    Japanese flick layout for Sailfish OS
 License:    LGPLv2
@@ -11,7 +11,7 @@ Requires:   libanthy-qml-plugin
 Requires:   patchmanager
 Requires:   jolla-anthy-jp
 Requires:   jolla-keyboard
-Requires:   sailfish-version >= 5.1.0
+Requires:   sailfish-version >= 5.2.0
 
 %description
 Allows you to type in Japanese by flick on Sailfish OS.
