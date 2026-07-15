@@ -1,5 +1,5 @@
 Name:       jolla-kbd-flick-jp
-Version:    1.0.0
+Version:    1.1.0
 Release:    1%{?dist}
 Summary:    Japanese flick layout for Sailfish OS
 License:    LGPLv2
@@ -11,7 +11,7 @@ Requires:   libanthy-qml-plugin
 Requires:   patchmanager
 Requires:   jolla-anthy-jp
 Requires:   jolla-keyboard
-Requires:   sailfish-version >= 3.0.0
+Requires:   sailfish-version >= 5.1.0
 
 %description
 Allows you to type in Japanese by flick on Sailfish OS.
@@ -46,6 +46,11 @@ fi
 /usr/sbin/patchmanager -u %{name} || true
 
 %changelog
+* Tue Jul 14 2026 Topias Vainio <toxip@disroot.org> 1.1.0-1
+- Added a separate settings file that no longer needs to be patched in
+- Added parentheses to left and right of や for easy access
+- Code cleanup
+
 * Sun Mar 3 2019 Topias Vainio <toxip@disroot.org> 1.0.0-1
 - Added assisting labels and poppers to ease users unfamiliar with flick keyboards
 - Added settings entries for assist labels and poppers under text input
