@@ -32,6 +32,7 @@ rm -rf %{buildroot}
 /usr/share/maliit/plugins/com/jolla/Flicker.qml
 /usr/share/maliit/plugins/com/jolla/FlickPopper.qml
 /usr/share/maliit/plugins/com/jolla/layouts/ja_10key_flick.qml
+/usr/share/maliit/plugins/com/jolla/layouts/ja_10key_flick_settings.qml
 /usr/share/maliit/plugins/com/jolla/layouts/ja_10key_flick.conf
 /usr/share/maliit/plugins/com/jolla/layouts/ja_10key_flick/
 /usr/share/patchmanager/patches/%{name}/
