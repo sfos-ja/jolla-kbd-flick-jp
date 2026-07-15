@@ -18,5 +18,4 @@ system((cd diff; diff -uprN original patched) > patch/unified_diff.patch)
 
 INSTALLS += \
         src \
-        patch \
-        settings
+        patch
