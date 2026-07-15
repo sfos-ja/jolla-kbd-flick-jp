@@ -28,13 +28,15 @@
  */
 
 import QtQuick 2.0
+import QtQml.Models 2.2
 import Sailfish.Silica 1.0
+import Sailfish.Silica.Background 1.0
 import com.meego.maliitquick 1.0
 import com.jolla.keyboard 1.0
-import org.nemomobile.configuration 1.0
+import Nemo.Configuration 1.0
 import "touchpointarray.js" as ActivePoints
 
-SwipeGestureArea {
+PagedView {
     id: keyboard
 
     property Item layout
@@ -50,7 +52,8 @@ SwipeGestureArea {
                                       || shiftState === ShiftState.LatchedShift
                                       || shiftState === ShiftState.LockedShift
                                       || (shiftState === ShiftState.AutoShift && autocaps
-                                          && (typeof inputHandler.preedit !== "string"
+                                          && (!inputHandler
+                                              || typeof inputHandler.preedit !== "string"
                                               || inputHandler.preedit.length === 0))
     readonly property bool isShiftLocked: shiftState === ShiftState.LockedShift
     readonly property alias languageSelectionPopupVisible: languageSelectionPopup.visible
@@ -59,6 +62,13 @@ SwipeGestureArea {
     property bool inSymView2
     // allow chinese input handler to override enter key state
     property bool chineseOverrideForEnter
+    property bool pasteEnabled: !_pasteDisabled && Clipboard.hasText
+    property bool _pasteDisabled
+    Binding on _pasteDisabled {
+        // avoid change when keyboard is hiding
+        when: MInputMethodQuick.active
+        value: !!MInputMethodQuick.extensions.pasteDisabled
+    }
 
     property bool silenceFeedback
     property bool layoutChangeAllowed
@@ -67,23 +77,20 @@ SwipeGestureArea {
     // counts how many character keys have been pressed since the ActivePoints array was empty
     property int characterKeyCounter
     property bool closeSwipeActive
-    property int closeSwipeThreshold: Math.max(height*.3, Theme.itemSizeSmall)
+    property int closeSwipeThreshold: Math.max(currentLayoutHeight*.3, Theme.itemSizeSmall)
 
-    property QtObject nextLayoutAttributes: QtObject {
-        property bool isShifted
-        property bool inSymView
-        property bool inSymView2
-        property bool isShiftLocked
-        property bool chineseOverrideForEnter
+    readonly property real currentLayoutHeight: layout ? layout.height : 2 * Theme.itemSizeHuge
+    readonly property real minimumLayoutHeight: {
+        var height = currentLayoutHeight
 
-        function update(layout) {
-            // Figure out what state we want to animate the next layout in
-            isShifted = keyboard.shouldUseAutocaps(layout)
-            inSymView = false
-            inSymView2 = false
-            isShiftLocked = false
-            chineseOverrideForEnter = keyboard.chineseOverrideForEnter
+        if (moving) {
+            var items = keyboard.exposedItems
+            for (var i = 0; i < items.length; ++i) {
+                height = Math.min(height, items[i].height)
+            }
         }
+
+        return height
     }
 
     // Can be changed to PreeditTestHandler to have another mode of input
@@ -91,14 +98,79 @@ SwipeGestureArea {
     }
 
     readonly property bool swipeGestureIsSafe: !releaseTimer.running
+    readonly property string sourceDirectory: "/usr/share/maliit/plugins/com/jolla/layouts/"
 
-    height: layout ? layout.height : 0
-    onLayoutChanged: if (layout) layout.parent = keyboard
+    verticalAlignment: PagedView.AlignBottom
+
     onPortraitModeChanged: cancelAllTouchPoints()
 
     // if height changed while touch point was being held
     // we can't rely on point values anymore
     onHeightChanged: closeSwipeActive = false
+
+    onMovingChanged: {
+        if (moving) {
+            cancelAllTouchPoints()
+        }
+    }
+
+    delegate: Item {
+        id: layoutDelegate
+
+        property Item loadedLayout: layoutLoader.item
+        property Item loader: layoutLoader
+        readonly property bool exposed: layoutLoader.status === Loader.Ready && PagedView.exposed
+        readonly property bool current: layoutLoader.status === Loader.Ready && PagedView.isCurrentItem
+
+        width: keyboard.width
+        height: layoutLoader.height
+
+        onExposedChanged: {
+            // Reset the layout keyboard state when it is dragged into view.
+            var attributes = exposed && !PagedView.isCurrentItem ? layoutLoader.item.attributes : null
+
+            if (attributes) {
+                attributes.isShifted = keyboard.shouldUseAutocaps(layoutLoader.item)
+                attributes.inSymView = false
+                attributes.inSymView2 = false
+                attributes.isShiftLocked = false
+            }
+        }
+
+        onCurrentChanged: {
+            var attributes = layoutLoader.item.attributes
+
+            if (current) {
+                // Bind to the active keyboad state when made the current layout.
+                attributes.isShifted = Qt.binding(function() { return keyboard.isShifted })
+                attributes.inSymView = Qt.binding(function() { return keyboard.inSymView })
+                attributes.inSymView2 = Qt.binding(function() { return keyboard.inSymView2 })
+                attributes.isShiftLocked = Qt.binding(function() { return keyboard.isShiftLocked })
+            } else {
+                // Break bindings to the active keyboard state when replaced as the current item
+                // to keep the visual appearance stable as it slides away.
+                attributes.isShifted = attributes.isShifted
+                attributes.inSymView = attributes.inSymView
+                attributes.inSymView2 = attributes.inSymView2
+                attributes.isShiftLocked = attributes.isShiftLocked
+            }
+        }
+
+        KeyboardBackground {
+            width: layoutDelegate.width
+            height: layoutDelegate.height
+            transformItem: keyboard
+        }
+
+        Loader {
+            id: layoutLoader
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: keyboard.portraitMode ? keyboard.width : geometry.keyboardWidthLandscape
+            height: status === Loader.Error ? Theme.itemSizeHuge : implicitHeight
+            source: keyboard.sourceDirectory + model.file
+        }
+    }
 
     Flicker {
         id: flicker
@@ -122,6 +194,7 @@ SwipeGestureArea {
 
     Popper {
         id: popper
+
         z: 10
         target: lastPressedKey
         onExpandedChanged: {
@@ -148,6 +221,7 @@ SwipeGestureArea {
 
     Timer {
         id: languageSwitchTimer
+
         interval: 500
         onTriggered: {
             if (canvas.layoutModel.enabledCount > 1) {
@@ -159,6 +233,7 @@ SwipeGestureArea {
 
     Timer {
         id: autocapsTimer
+
         interval: 1
         onTriggered: applyAutocaps()
     }
@@ -185,7 +260,9 @@ SwipeGestureArea {
             }
         }
         onInputMethodReset: {
-            inputHandler._reset()
+            if (inputHandler) {
+                inputHandler._reset()
+            }
         }
     }
 
@@ -195,19 +272,30 @@ SwipeGestureArea {
         defaultValue: false
     }
 
+
     MouseArea {
+        id: mouseArea
+
         enabled: useMouseEvents.value
         anchors.fill: parent
+        z: -1
 
-        onPressed: keyboard.handlePressed(createPointArray(mouse.x, mouse.y))
+        onPressed: {
+            startX = mouse.x
+            startY = mouse.y
+            keyboard.handlePressed(createPointArray(mouse.x, mouse.y))
+        }
         onPositionChanged: keyboard.handleUpdated(createPointArray(mouse.x, mouse.y))
         onReleased: keyboard.handleReleased(createPointArray(mouse.x, mouse.y))
         onCanceled: keyboard.cancelAllTouchPoints()
 
+        property real startX
+        property real startY
+
         function createPointArray(pointX, pointY) {
             var pointArray = new Array
             pointArray.push({"pointId": 1, "x": pointX, "y": pointY,
-                             "startX": pointX, "startY": pointY })
+                             "startX": startX, "startY": startY })
             return pointArray
         }
     }
@@ -216,10 +304,29 @@ SwipeGestureArea {
         anchors.fill: parent
         enabled: !useMouseEvents.value
 
+        // Position this below the PagedView contentItem so it doesn't intercept events that would
+        // have been handled by an interactive item in a keyboard layout.
+        z: -1
+
         onPressed: keyboard.handlePressed(touchPoints)
         onUpdated: keyboard.handleUpdated(touchPoints)
         onReleased: keyboard.handleReleased(touchPoints)
         onCanceled: keyboard.handleCanceled(touchPoints)
+
+        onGestureStarted: {
+            if (mouseArea.preventStealing) {
+                // QTBUG-48314&QTBUG-44372
+                // MultiPointTouchArea onGestureStarted: gesture.grab() does not get released on a touch release
+                // gesture.grab()
+                keyboard.interactive = false
+            }
+        }
+    }
+
+    function cancelGesture() {
+        if (ActivePoints.array.length > 0) {
+            mouseArea.preventStealing = true
+        }
     }
 
     function handlePressed(touchPoints) {
@@ -234,6 +341,10 @@ SwipeGestureArea {
         for (var i = 0; i < touchPoints.length; i++) {
             var point = ActivePoints.addPoint(touchPoints[i])
             updatePressedKey(point)
+        }
+
+        if (ActivePoints.array.length > 1) {
+            keyboard.interactive = false // disable keyboard drag until all the touchpoints are released
         }
     }
 
@@ -256,7 +367,11 @@ SwipeGestureArea {
                 var yDiff = point.y - point.startY
                 silenceFeedback = (yDiff > Math.abs(point.x - point.startX))
 
-                if (yDiff > closeSwipeThreshold) {
+                if (yDiff >= Theme.startDragDistance) {
+                    mouseArea.preventStealing = true
+                }
+
+                if (yDiff > closeSwipeThreshold && !MInputMethodQuick.extensions.keyboardClosingDisabled) {
                     // swiped down to close keyboard
                     MInputMethodQuick.userHide()
                     if (point.pressedKey) {
@@ -351,9 +466,6 @@ SwipeGestureArea {
                 popper.release()
                 point.pressedKey.pressed = false
             } else {
-                if (flicker.enabled) {
-                    flicker.setIndex(point)
-                }
                 triggerKey(point.pressedKey)
             }
 
@@ -371,6 +483,11 @@ SwipeGestureArea {
             characterKeyCounter = 0
         }
         languageSwitchTimer.stop()
+
+        if (ActivePoints.array.length === 0) {
+            keyboard.interactive = true
+            mouseArea.preventStealing = false
+        }
     }
 
     function handleCanceled(touchPoints) {
@@ -384,9 +501,15 @@ SwipeGestureArea {
             return null
 
         var item = layout
+        var current = currentItem
 
-        x -= layout.x
-        y -= layout.y
+        if (current && current.loadedLayout === layout) {
+            x -= current.x + current.loader.x
+            y -= current.y + current.loader.y
+        } else {
+            x -= item.x
+            y -= item.y
+        }
 
         while ((item = item.childAt(x, y)) != null) {
             if (typeof item.keyType !== 'undefined' && item.enabled === true) {
@@ -403,24 +526,27 @@ SwipeGestureArea {
 
     function cancelTouchPoint(pointId) {
         var point = ActivePoints.findById(pointId)
-        if (!point)
-            return
-
-        if (point.pressedKey) {
-            inputHandler._handleKeyRelease()
-            point.pressedKey.pressed = false
-            if (lastPressedKey === point.pressedKey) {
-                lastPressedKey = null
+        if (point) {
+            if (point.pressedKey) {
+                inputHandler._handleKeyRelease()
+                point.pressedKey.pressed = false
+                if (lastPressedKey === point.pressedKey) {
+                    lastPressedKey = null
+                }
             }
-        }
-        if (lastInitialKey === point.initialKey) {
-            lastInitialKey = null
+            if (lastInitialKey === point.initialKey) {
+                lastInitialKey = null
+            }
+
+            languageSwitchTimer.stop()
+            languageSelectionPopup.hide()
+
+            ActivePoints.remove(point)
         }
 
-        languageSwitchTimer.stop()
-        languageSelectionPopup.hide()
-
-        ActivePoints.remove(point)
+        if (ActivePoints.array.length === 0) {
+            mouseArea.preventStealing = false
+        }
     }
 
     function cancelAllTouchPoints() {
@@ -436,7 +562,9 @@ SwipeGestureArea {
         inSymView2 = false
 
         resetShift()
-        inputHandler._reset()
+        if (inputHandler) {
+            inputHandler._reset()
+        }
 
         lastPressedKey = null
         lastInitialKey = null
