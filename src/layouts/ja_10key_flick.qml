@@ -130,7 +130,7 @@ KeyboardLayout {
             accentsShifted: ""
         }
         TenKey_Flick {
-            flickerText: "\u3084\u3084\u3086\u3084\u3088"
+            flickerText: "\u3084\uFF08\u3086\uFF09\u3088"
             captionShifted: "tuv"
             captionShifted2: "TUV"
             symView: "8\u00D7\u00F7\u203B"
