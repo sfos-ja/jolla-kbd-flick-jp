@@ -12,10 +12,16 @@ Column {
     TextSwitch {
         automaticCheck: false
         checked: flickAssistConfig.value
-        text: "Assist labels"
+        text: "Assist labels on key"
         onClicked: flickAssistConfig.value = !flickAssistConfig.value
     }
 
+    TextSwitch {
+        automaticCheck: false
+        checked: flickPopperAssistConfig.value
+        text: "Assist labels on popper"
+        onClicked: flickPopperAssistConfig.value = !flickPopperAssistConfig.value
+    }
 
     TextSwitch {
         automaticCheck: false
@@ -28,6 +34,13 @@ Column {
         id: flickAssistConfig
 
         key: "/sailfish/text_input/flick_assist_label_enabled"
+        defaultValue: false
+    }
+
+    ConfigurationValue {
+        id: flickPopperAssistConfig
+
+        key: "/sailfish/text_input/flick_popper_assist_label_enabled"
         defaultValue: false
     }
 
