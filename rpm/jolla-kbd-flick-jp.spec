@@ -44,14 +44,3 @@ fi
 
 %preun
 /usr/sbin/patchmanager -u %{name} || true
-
-%changelog
-* Tue Jul 14 2026 Topias Vainio <toxip@disroot.org> 1.1.0-1
-- Added a separate settings file that no longer needs to be patched in
-- Added parentheses to left and right of や for easy access
-- Code cleanup
-
-* Sun Mar 3 2019 Topias Vainio <toxip@disroot.org> 1.0.0-1
-- Added assisting labels and poppers to ease users unfamiliar with flick keyboards
-- Added settings entries for assist labels and poppers under text input
-- Refactoring and code cleanup
