@@ -36,6 +36,7 @@ rm -rf %{buildroot}
 /usr/share/maliit/plugins/com/jolla/layouts/ja_10key_flick.conf
 /usr/share/maliit/plugins/com/jolla/layouts/ja_10key_flick/
 /usr/share/patchmanager/patches/%{name}/
+/usr/share/maliit/plugins/com/jolla/handlers/JaInputHandler.qml
 
 %pre
 if [ -d /usr/share/patchmanager/patches/%{name} ]; then
