@@ -7,7 +7,7 @@ import se.behold.anthy 1.0
 import ".."
 import "../.."
 
-import "parse_10key_flick.js" as Parser
+import "../layouts/ja_10key_flick/parse_10key_flick.js" as Parser
 
 InputHandler {
 
